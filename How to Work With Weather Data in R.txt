@@ -1,0 +1,37 @@
+library(riem)
+library(tidyverse)
+library(lubridate)
+## How to load in weather data in R 
+## load RIEM Library
+?riem_networks
+## Figure out state code 
+View(riem_networks())
+
+##"CO_ASOS"
+## Figure out location code for city etc
+
+  View(riem_stations("CO_ASOS"))
+
+  ## Denver Station 
+  denver=riem_measures("DEN")
+
+View(denver)
+denver %>% 
+mutate(date=ymd_hms(valid), date=as.Date(date)) %>%
+group_by(date) %>% 
+summarize(Daily_low= min(tmpf,na.rm=TRUE))  
+
+
+
+denver %>% 
+  mutate(date=ymd_hms(valid), date=as.Date(date)) %>%
+  group_by(date) %>% 
+  summarize_all(~mean(.,na.rm=TRUE)) %>%  glimpse()
+
+
+denver %>% 
+  mutate(date=ymd_hms(valid), date=as.Date(date)) %>%
+  group_by(date) %>% 
+  summarize(Daily_low= min(tmpf,na.rm=TRUE)) %>% 
+  ggplot(aes(x=date,y=Daily_low))+
+  geom_line(color="red")
